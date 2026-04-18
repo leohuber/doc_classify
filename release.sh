@@ -59,24 +59,26 @@ fi
 
 # ── Bundle zip ───────────────────────────────────────────────────────
 echo "Creating ${ZIP_NAME} ..."
-staging="doc-classify-${VERSION}"
+mkdir -p .tmp
+staging=".tmp/doc-classify-${VERSION}"
 mkdir -p "${staging}"
 cp "${wheel}" "${staging}/"
 cp install.sh "${staging}/"
-zip -r "${ZIP_NAME}" "${staging}"
+(cd .tmp && zip -r "${ZIP_NAME}" "doc-classify-${VERSION}")
 rm -rf "${staging}"
 
 # ── Tag and release ──────────────────────────────────────────────────
 echo "Creating git tag ${TAG} ..."
 git tag "${TAG}"
+git push origin "${TAG}"
 
 echo "Publishing GitHub release ..."
-gh release create "${TAG}" "${ZIP_NAME}" \
+gh release create "${TAG}" ".tmp/${ZIP_NAME}" \
     --title "doc-classify ${VERSION}" \
     --notes "Release ${VERSION}"
 
 # ── Clean up ─────────────────────────────────────────────────────────
-rm -rf dist/ "${ZIP_NAME}"
+rm -rf dist/ .tmp/
 
 echo ""
 echo "✓ Released ${TAG} successfully!"
