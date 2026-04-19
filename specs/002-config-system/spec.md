@@ -5,6 +5,13 @@
 **Status**: Draft  
 **Input**: User description: "build a configuration system with a config sub-package of doc-classify package. the config system should have two modes - development mode where the config is stored in the .tmp/config directory of the project and prod mode where the config is stored in the users home directory. Default is development. With a zsh script the mode can be changed just before a new release and another script reverses the mode to development. There are two types of configs - permanent configs in pyproject.toml (like version) and user adaptable configs in the .tmp/config directory or the users home directory."
 
+## Clarifications
+
+### Session 2026-04-19
+
+- Q: Where is the mode indicator stored? → A: Source code constant in the config module (e.g., `MODE = "development"`). The zsh scripts use sed to toggle this value. The constant is baked into the released package.
+- Q: What initial user-adaptable config keys for v1? → A: Minimal bootstrap set (log_level, output_format) — enough to validate the system end-to-end. Additional keys added by future features.
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 - Read Configuration Values at Runtime (Priority: P1)
@@ -90,19 +97,21 @@ As a developer who has completed a release, I run a zsh script that reverts the 
 - **FR-004**: In development mode, user-adaptable configuration MUST be read from and written to the `.tmp/config/` directory relative to the project root.
 - **FR-005**: In production mode, user-adaptable configuration MUST be read from and written to a dedicated directory in the user's home directory (`~/.doc-classify/`).
 - **FR-006**: Permanent configuration values (e.g., application version) MUST always be read from `pyproject.toml`, regardless of the active mode.
-- **FR-007**: System MUST provide a zsh script that switches the mode from development to production for release preparation.
-- **FR-008**: System MUST provide a zsh script that reverts the mode from production back to development after a release.
-- **FR-009**: Both mode-switching scripts MUST be idempotent — running them when already in the target mode produces no error.
-- **FR-010**: System MUST automatically create default configuration files when they do not exist at the expected location.
-- **FR-011**: System MUST validate user-adaptable configuration values on load and provide clear error messages for invalid entries.
-- **FR-012**: Permanent config values MUST NOT be modifiable through the config sub-package (read-only access).
-- **FR-013**: The `.tmp/` directory MUST be excluded from version control (added to `.gitignore`).
+- **FR-007**: System MUST store the active mode as a source code constant in the config module, defaulting to "development".
+- **FR-008**: System MUST provide a zsh script that switches the mode constant from "development" to "production" for release preparation.
+- **FR-009**: System MUST provide a zsh script that reverts the mode constant from "production" back to "development" after a release.
+- **FR-010**: Both mode-switching scripts MUST be idempotent — running them when already in the target mode produces no error.
+- **FR-011**: System MUST automatically create default configuration files when they do not exist at the expected location.
+- **FR-012**: System MUST validate user-adaptable configuration values on load and provide clear error messages for invalid entries.
+- **FR-013**: Permanent config values MUST NOT be modifiable through the config sub-package (read-only access).
+- **FR-014**: The `.tmp/` directory MUST be excluded from version control (added to `.gitignore`).
+- **FR-015**: The initial user-adaptable configuration MUST include at minimum: `log_level` (controls logging verbosity) and `output_format` (controls output presentation). Additional keys will be added by future features.
 
 ### Key Entities
 
-- **ConfigMode**: Represents the active configuration mode ("development" or "production"). Determines which file system path is used for user-adaptable configuration.
+- **ConfigMode**: A source code constant in the config module representing the active mode ("development" or "production"). Determines which file system path is used for user-adaptable configuration. Modified by zsh scripts at release time, baked into the distributed package.
 - **PermanentConfig**: Read-only configuration values sourced from `pyproject.toml`. Includes application metadata such as version. Accessible regardless of mode.
-- **UserConfig**: User-modifiable configuration values stored in a file at the mode-dependent path. Supports reading, validation, and default creation.
+- **UserConfig**: User-modifiable configuration values stored in a TOML file at the mode-dependent path. Initial keys: `log_level` (string, e.g., "info", "debug", "warning", "error") and `output_format` (string, e.g., "text", "json"). Supports reading, validation, and default creation. Extensible by future features.
 - **ConfigManager**: Central coordinator that resolves the active mode, loads the appropriate config sources, and provides a unified access interface.
 
 ## Success Criteria *(mandatory)*
