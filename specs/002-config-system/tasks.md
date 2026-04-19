@@ -17,7 +17,7 @@
 
 **Purpose**: Create config sub-package directory structure and test directory
 
-- [ ] T001 Create config sub-package directory at src/doc_classify/config/ and test directory at tests/test_config/ with __init__.py files
+- [x] T001 Create config sub-package directory at src/doc_classify/config/ and test directory at tests/test_config/ with __init__.py files
 
 ---
 
@@ -27,11 +27,11 @@
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete
 
-- [ ] T002 [P] Create custom exception hierarchy in src/doc_classify/config/_exceptions.py (ConfigError base, ConfigNotFoundError, ConfigValidationError — Google docstrings, specific exception classes per Constitution I & III)
-- [ ] T003 [P] Create config defaults and schema in src/doc_classify/config/_defaults.py (DEFAULT_LOG_LEVEL="info", DEFAULT_OUTPUT_FORMAT="text", VALID_LOG_LEVELS frozenset, VALID_OUTPUT_FORMATS frozenset, DEFAULT_CONFIG_TEMPLATE string, CONFIG_FILE_NAME="config.toml", CONFIG_SCHEMA dict mapping keys to allowed values)
-- [ ] T004 [P] Create mode constant and helper in src/doc_classify/config/_mode.py (MODE: Literal["development", "production"] = "development", get_mode() → str function, DEVELOPMENT/PRODUCTION named constants)
-- [ ] T005 Create path resolution in src/doc_classify/config/_paths.py (get_config_dir() → Path, _find_project_root() → Path using __file__ ancestor + pyproject.toml check, DEV_CONFIG_SUBDIR=".tmp/config", PROD_CONFIG_DIR="~/.doc-classify" — depends on _mode.py)
-- [ ] T006 Create validation logic in src/doc_classify/config/_validation.py (validate_config(data: dict) → dict function, raises ConfigValidationError with key name and expected format for invalid values, logs warning for unknown keys — depends on _defaults.py)
+- [x] T002 [P] Create custom exception hierarchy in src/doc_classify/config/_exceptions.py (ConfigError base, ConfigNotFoundError, ConfigValidationError — Google docstrings, specific exception classes per Constitution I & III)
+- [x] T003 [P] Create config defaults and schema in src/doc_classify/config/_defaults.py (DEFAULT_LOG_LEVEL="info", DEFAULT_OUTPUT_FORMAT="text", VALID_LOG_LEVELS frozenset, VALID_OUTPUT_FORMATS frozenset, DEFAULT_CONFIG_TEMPLATE string, CONFIG_FILE_NAME="config.toml", CONFIG_SCHEMA dict mapping keys to allowed values)
+- [x] T004 [P] Create mode constant and helper in src/doc_classify/config/_mode.py (MODE: Literal["development", "production"] = "development", get_mode() → str function, DEVELOPMENT/PRODUCTION named constants)
+- [x] T005 Create path resolution in src/doc_classify/config/_paths.py (get_config_dir() → Path, _find_project_root() → Path using __file__ ancestor + pyproject.toml check, DEV_CONFIG_SUBDIR=".tmp/config", PROD_CONFIG_DIR="~/.doc-classify" — depends on _mode.py)
+- [x] T006 Create validation logic in src/doc_classify/config/_validation.py (validate_config(data: dict) → dict function, raises ConfigValidationError with key name and expected format for invalid values, logs warning for unknown keys — depends on _defaults.py)
 
 **Checkpoint**: Foundation ready — user story implementation can now begin
 
@@ -45,17 +45,17 @@
 
 ### Implementation for User Story 1
 
-- [ ] T007 [P] [US1] Create PermanentConfig in src/doc_classify/config/_permanent.py (frozen dataclass with version: str and name: str fields, load via importlib.metadata.version/metadata, read-only by design per FR-013)
-- [ ] T008 [US1] Create UserConfig in src/doc_classify/config/_user.py (dataclass with log_level: str and output_format: str, load_user_config() reads TOML via tomllib from mode-dependent path, _create_default_config() writes DEFAULT_CONFIG_TEMPLATE to path with mkdir -p, _ensure_config_exists() auto-creates if missing — depends on _paths, _defaults, _validation, _exceptions)
-- [ ] T009 [US1] Create public API in src/doc_classify/config/__init__.py (AppConfig dataclass combining permanent: PermanentConfig + user: UserConfig, get_config() → AppConfig, get_permanent() → PermanentConfig, get_user_config() → UserConfig convenience functions, module docstring, __all__ exports)
+- [x] T007 [P] [US1] Create PermanentConfig in src/doc_classify/config/_permanent.py (frozen dataclass with version: str and name: str fields, load via importlib.metadata.version/metadata, read-only by design per FR-013)
+- [x] T008 [US1] Create UserConfig in src/doc_classify/config/_user.py (dataclass with log_level: str and output_format: str, load_user_config() reads TOML via tomllib from mode-dependent path, _create_default_config() writes DEFAULT_CONFIG_TEMPLATE to path with mkdir -p, _ensure_config_exists() auto-creates if missing — depends on _paths, _defaults, _validation, _exceptions)
+- [x] T009 [US1] Create public API in src/doc_classify/config/__init__.py (AppConfig dataclass combining permanent: PermanentConfig + user: UserConfig, get_config() → AppConfig, get_permanent() → PermanentConfig, get_user_config() → UserConfig convenience functions, module docstring, __all__ exports)
 
 ### Tests for User Story 1
 
-- [ ] T010 [P] [US1] Write tests/test_config/test_mode.py (test MODE defaults to "development", test get_mode() returns valid literal, test DEVELOPMENT/PRODUCTION constants match expected values)
-- [ ] T011 [P] [US1] Write tests/test_config/test_paths.py (test dev mode returns .tmp/config/ relative to project root, test prod mode returns ~/.doc-classify/, test _find_project_root() finds pyproject.toml ancestor, use tmp_path and monkeypatch fixtures)
-- [ ] T012 [P] [US1] Write tests/test_config/test_permanent.py (test version matches importlib.metadata.version("doc-classify"), test name is "doc-classify", test PermanentConfig is frozen/immutable)
-- [ ] T013 [US1] Write tests/test_config/test_user.py (test default config file created when absent with correct content, test load reads existing TOML correctly, test correct path used per mode using tmp_path, test log_level and output_format defaults)
-- [ ] T014 [US1] Write tests/test_config/test_integration.py (test get_config() returns AppConfig with both permanent and user data, test fresh directory with no config produces working defaults, test dev mode reads from .tmp/config/, test prod mode reads from home dir)
+- [x] T010 [P] [US1] Write tests/test_config/test_mode.py (test MODE defaults to "development", test get_mode() returns valid literal, test DEVELOPMENT/PRODUCTION constants match expected values)
+- [x] T011 [P] [US1] Write tests/test_config/test_paths.py (test dev mode returns .tmp/config/ relative to project root, test prod mode returns ~/.doc-classify/, test _find_project_root() finds pyproject.toml ancestor, use tmp_path and monkeypatch fixtures)
+- [x] T012 [P] [US1] Write tests/test_config/test_permanent.py (test version matches importlib.metadata.version("doc-classify"), test name is "doc-classify", test PermanentConfig is frozen/immutable)
+- [x] T013 [US1] Write tests/test_config/test_user.py (test default config file created when absent with correct content, test load reads existing TOML correctly, test correct path used per mode using tmp_path, test log_level and output_format defaults)
+- [x] T014 [US1] Write tests/test_config/test_integration.py (test get_config() returns AppConfig with both permanent and user data, test fresh directory with no config produces working defaults, test dev mode reads from .tmp/config/, test prod mode reads from home dir)
 
 **Checkpoint**: User Story 1 fully functional — config system reads values from correct locations, creates defaults automatically
 
@@ -69,12 +69,12 @@
 
 ### Implementation for User Story 2
 
-- [ ] T015 [US2] Enhance error messages in _user.py and _validation.py to include the specific invalid key, the invalid value provided, and the list of allowed values per FR-012 and SC-005 in src/doc_classify/config/_user.py and src/doc_classify/config/_validation.py
+- [x] T015 [US2] Enhance error messages in _user.py and _validation.py to include the specific invalid key, the invalid value provided, and the list of allowed values per FR-012 and SC-005 in src/doc_classify/config/_user.py and src/doc_classify/config/_validation.py
 
 ### Tests for User Story 2
 
-- [ ] T016 [P] [US2] Write tests/test_config/test_validation.py (test valid log_level values all pass, test valid output_format values pass, test invalid log_level raises ConfigValidationError with key name in message, test invalid output_format raises ConfigValidationError, test unknown keys produce warning but don't fail, test error message contains expected format hint)
-- [ ] T017 [US2] Add modification scenarios to tests/test_config/test_user.py (test editing config.toml and reloading reflects new values, test editing to invalid value raises error on next load, test partial edit preserving other keys)
+- [x] T016 [P] [US2] Write tests/test_config/test_validation.py (test valid log_level values all pass, test valid output_format values pass, test invalid log_level raises ConfigValidationError with key name in message, test invalid output_format raises ConfigValidationError, test unknown keys produce warning but don't fail, test error message contains expected format hint)
+- [x] T017 [US2] Add modification scenarios to tests/test_config/test_user.py (test editing config.toml and reloading reflects new values, test editing to invalid value raises error on next load, test partial edit preserving other keys)
 
 **Checkpoint**: User Story 2 complete — config edits reflected, invalid values produce clear errors
 
@@ -88,11 +88,11 @@
 
 ### Implementation for User Story 3
 
-- [ ] T018 [US3] Create set-mode-prod.zsh in project root (#!/usr/bin/env zsh, set -euo pipefail, sed -i replacement of MODE = "development" to MODE = "production" in src/doc_classify/config/_mode.py, idempotent — check current value first, echo confirmation message, chmod +x)
+- [x] T018 [US3] Create set-mode-prod.zsh in project root (#!/usr/bin/env zsh, set -euo pipefail, sed -i replacement of MODE = "development" to MODE = "production" in src/doc_classify/config/_mode.py, idempotent — check current value first, echo confirmation message, chmod +x)
 
 ### Tests for User Story 3
 
-- [ ] T019 [US3] Write mode switching tests in tests/test_config/test_scripts.py (test set-mode-prod.zsh changes constant to "production" via subprocess, test idempotent — running when already production succeeds without error, use tmp_path with copy of _mode.py to avoid modifying source)
+- [x] T019 [US3] Write mode switching tests in tests/test_config/test_scripts.py (test set-mode-prod.zsh changes constant to "production" via subprocess, test idempotent — running when already production succeeds without error, use tmp_path with copy of _mode.py to avoid modifying source)
 
 **Checkpoint**: Production mode switch works — ready for release workflow
 
@@ -106,11 +106,11 @@
 
 ### Implementation for User Story 4
 
-- [ ] T020 [P] [US4] Create set-mode-dev.zsh in project root (#!/usr/bin/env zsh, set -euo pipefail, sed -i replacement of MODE = "production" to MODE = "development" in src/doc_classify/config/_mode.py, idempotent — check current value first, echo confirmation message, chmod +x)
+- [x] T020 [P] [US4] Create set-mode-dev.zsh in project root (#!/usr/bin/env zsh, set -euo pipefail, sed -i replacement of MODE = "production" to MODE = "development" in src/doc_classify/config/_mode.py, idempotent — check current value first, echo confirmation message, chmod +x)
 
 ### Tests for User Story 4
 
-- [ ] T021 [US4] Write mode revert tests in tests/test_config/test_scripts.py (test set-mode-dev.zsh changes constant to "development" via subprocess, test idempotent — running when already development succeeds without error, test round-trip: prod→dev→prod all succeed)
+- [x] T021 [US4] Write mode revert tests in tests/test_config/test_scripts.py (test set-mode-dev.zsh changes constant to "development" via subprocess, test idempotent — running when already development succeeds without error, test round-trip: prod→dev→prod all succeed)
 
 **Checkpoint**: Development mode revert works — post-release workflow complete
 
@@ -120,10 +120,10 @@
 
 **Purpose**: Validation, cleanup, and quality assurance across all stories
 
-- [ ] T022 [P] Run uv run ruff check src/doc_classify/config/ tests/test_config/ and fix any violations
-- [ ] T023 [P] Run uv run ruff format src/doc_classify/config/ tests/test_config/ and verify formatting
-- [ ] T024 Run uv run pytest to verify full test suite passes (existing + new tests)
-- [ ] T025 Validate quickstart.md examples work end-to-end (import config, read values, verify defaults created)
+- [x] T022 [P] Run uv run ruff check src/doc_classify/config/ tests/test_config/ and fix any violations
+- [x] T023 [P] Run uv run ruff format src/doc_classify/config/ tests/test_config/ and verify formatting
+- [x] T024 Run uv run pytest to verify full test suite passes (existing + new tests)
+- [x] T025 Validate quickstart.md examples work end-to-end (import config, read values, verify defaults created)
 
 ---
 
