@@ -72,21 +72,6 @@ As a developer who has completed a release, I run a zsh script that reverts the 
 
 ---
 
-### User Story 5 - Query Current Configuration Mode (Priority: P3)
-
-As a developer or user, I can check which configuration mode is currently active so I know where the application is reading its config from.
-
-**Why this priority**: Useful for debugging and awareness, but not critical for core functionality.
-
-**Independent Test**: Can be fully tested by querying the current mode and verifying it matches the expected state after switching modes.
-
-**Acceptance Scenarios**:
-
-1. **Given** the application is in development mode, **When** the user queries the current mode, **Then** "development" is displayed along with the config directory path.
-2. **Given** the application is in production mode, **When** the user queries the current mode, **Then** "production" is displayed along with the config directory path.
-
----
-
 ### Edge Cases
 
 - What happens when the `.tmp/config/` directory does not exist in a fresh clone? The system creates it automatically with default config values.
@@ -110,9 +95,8 @@ As a developer or user, I can check which configuration mode is currently active
 - **FR-009**: Both mode-switching scripts MUST be idempotent — running them when already in the target mode produces no error.
 - **FR-010**: System MUST automatically create default configuration files when they do not exist at the expected location.
 - **FR-011**: System MUST validate user-adaptable configuration values on load and provide clear error messages for invalid entries.
-- **FR-012**: System MUST expose the current configuration mode and active config directory path programmatically.
-- **FR-013**: Permanent config values MUST NOT be modifiable through the config sub-package (read-only access).
-- **FR-014**: The `.tmp/` directory MUST be excluded from version control (added to `.gitignore`).
+- **FR-012**: Permanent config values MUST NOT be modifiable through the config sub-package (read-only access).
+- **FR-013**: The `.tmp/` directory MUST be excluded from version control (added to `.gitignore`).
 
 ### Key Entities
 
