@@ -1,15 +1,15 @@
-#!/usr/bin/env bash
+#!/usr/bin/env zsh
 set -euo pipefail
 
 # ──────────────────────────────────────────────────────────────────────
-# release.sh — Build, tag, and publish a GitHub release for doc-classify
+# release.zsh — Build, tag, and publish a GitHub release for doc-classify
 #
 # Pre-flight checks ensure a clean, reproducible release from main.
 # ──────────────────────────────────────────────────────────────────────
 
 # ── Resolve project root (parent of this script's directory) ─────────
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PROJECT_ROOT="$(dirname "${SCRIPT_DIR}")"
+SCRIPT_DIR="${0:a:h}"
+PROJECT_ROOT="${SCRIPT_DIR:h}"
 
 # ── Read version from pyproject.toml ─────────────────────────────────
 VERSION="$(python3 -c "
@@ -52,7 +52,8 @@ echo "Select version bump type:"
 echo "  1) major"
 echo "  2) minor"
 echo "  3) patch"
-read -p "Enter choice (1-3): " bump_choice
+print -n "Enter choice (1-3): "
+read bump_choice
 
 case "${bump_choice}" in
     1)
@@ -106,9 +107,9 @@ print(f'Version bumped: {version} → {new_version}')
 # ── Set production mode ──────────────────────────────────────────────
 echo "Running set-mode-prod.zsh ..."
 if [[ -f "${PROJECT_ROOT}/../set-mode-prod.zsh" ]]; then
-    bash "${PROJECT_ROOT}/../set-mode-prod.zsh"
+    zsh "${PROJECT_ROOT}/../set-mode-prod.zsh"
 elif [[ -f "${PROJECT_ROOT}/scripts/set-mode-prod.zsh" ]]; then
-    bash "${PROJECT_ROOT}/scripts/set-mode-prod.zsh"
+    zsh "${PROJECT_ROOT}/scripts/set-mode-prod.zsh"
 else
     echo "Warning: set-mode-prod.zsh not found, skipping." >&2
 fi
@@ -154,9 +155,9 @@ rm -rf "${PROJECT_ROOT}/dist/" "${PROJECT_ROOT}/.tmp/"
 # ── Set development mode and commit ──────────────────────────────────
 echo "Running set-mode-dev.zsh ..."
 if [[ -f "${PROJECT_ROOT}/../set-mode-dev.zsh" ]]; then
-    bash "${PROJECT_ROOT}/../set-mode-dev.zsh"
+    zsh "${PROJECT_ROOT}/../set-mode-dev.zsh"
 elif [[ -f "${PROJECT_ROOT}/scripts/set-mode-dev.zsh" ]]; then
-    bash "${PROJECT_ROOT}/scripts/set-mode-dev.zsh"
+    zsh "${PROJECT_ROOT}/scripts/set-mode-dev.zsh"
 else
     echo "Warning: set-mode-dev.zsh not found, skipping." >&2
 fi
