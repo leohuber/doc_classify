@@ -15,7 +15,7 @@ DEVELOPMENT: str = "development"
 PRODUCTION: str = "production"
 
 # Active mode — toggled by zsh scripts at release time
-MODE: Literal["development", "production"] = "production"
+MODE: Literal["development", "production"] = "development"
 
 
 def get_mode() -> str:
