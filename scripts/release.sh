@@ -51,6 +51,78 @@ fi
 
 echo "Pre-flight checks passed ✓"
 
+# ── Version bump ─────────────────────────────────────────────────────
+echo ""
+echo "Select version bump type:"
+echo "  1) major"
+echo "  2) minor"
+echo "  3) patch"
+read -p "Enter choice (1-3): " bump_choice
+
+case "${bump_choice}" in
+    1)
+        bump_type="major"
+        ;;
+    2)
+        bump_type="minor"
+        ;;
+    3)
+        bump_type="patch"
+        ;;
+    *)
+        echo "Error: Invalid choice. Please select 1, 2, or 3." >&2
+        exit 1
+        ;;
+esac
+
+echo "Bumping ${bump_type} version ..."
+python3 -c "
+import re, pathlib
+path = pathlib.Path('${PROJECT_ROOT}/pyproject.toml')
+content = path.read_text()
+match = re.search(r'version\s*=\s*[\"\'](.*?)[\"\']', content)
+if not match:
+    exit(1)
+version = match.group(1)
+parts = version.split('.')
+major, minor, patch = int(parts[0]), int(parts[1]), int(parts[2])
+
+if '${bump_type}' == 'major':
+    major += 1
+    minor = 0
+    patch = 0
+elif '${bump_type}' == 'minor':
+    minor += 1
+    patch = 0
+else:
+    patch += 1
+
+new_version = f'{major}.{minor}.{patch}'
+new_content = re.sub(
+    r'version\s*=\s*[\"\'](.*?)[\"\']',
+    f'version = \"{new_version}\"',
+    content,
+    count=1
+)
+path.write_text(new_content)
+print(f'Version bumped: {version} → {new_version}')
+"
+
+# ── Set production mode ──────────────────────────────────────────────
+echo "Running set-mode-prod.zsh ..."
+if [[ -f "${PROJECT_ROOT}/../set-mode-prod.zsh" ]]; then
+    bash "${PROJECT_ROOT}/../set-mode-prod.zsh"
+elif [[ -f "${PROJECT_ROOT}/scripts/set-mode-prod.zsh" ]]; then
+    bash "${PROJECT_ROOT}/scripts/set-mode-prod.zsh"
+else
+    echo "Warning: set-mode-prod.zsh not found, skipping." >&2
+fi
+
+# ── Commit version bump ──────────────────────────────────────────────
+echo "Committing version bump ..."
+git add "${PROJECT_ROOT}/pyproject.toml"
+git commit -m "chore: bump version to ${bump_type}"
+
 # ── Build ────────────────────────────────────────────────────────────
 echo "Building package ..."
 (cd "${PROJECT_ROOT}" && uv build)
@@ -83,6 +155,20 @@ gh release create "${TAG}" "${PROJECT_ROOT}/.tmp/${ZIP_NAME}" \
 
 # ── Clean up ─────────────────────────────────────────────────────────
 rm -rf "${PROJECT_ROOT}/dist/" "${PROJECT_ROOT}/.tmp/"
+
+# ── Set development mode and commit ──────────────────────────────────
+echo "Running set-mode-dev.zsh ..."
+if [[ -f "${PROJECT_ROOT}/../set-mode-dev.zsh" ]]; then
+    bash "${PROJECT_ROOT}/../set-mode-dev.zsh"
+elif [[ -f "${PROJECT_ROOT}/scripts/set-mode-dev.zsh" ]]; then
+    bash "${PROJECT_ROOT}/scripts/set-mode-dev.zsh"
+else
+    echo "Warning: set-mode-dev.zsh not found, skipping." >&2
+fi
+
+echo "Committing development mode changes ..."
+git add -A
+git commit -m "chore: revert to development mode"
 
 echo ""
 echo "✓ Released ${TAG} successfully!"
