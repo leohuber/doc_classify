@@ -34,11 +34,6 @@ class TestVersion:
         result = _runner().invoke(main, ["--version"])
         assert result.exit_code == 0
 
-    def test_version_contains_number(self) -> None:
-        """``--version`` output contains the version string."""
-        result = _runner().invoke(main, ["--version"])
-        assert "0.1.0" in result.output
-
     def test_version_matches_metadata(self) -> None:
         """``--version`` output matches importlib.metadata."""
         result = _runner().invoke(main, ["--version"])
