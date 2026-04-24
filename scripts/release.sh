@@ -7,10 +7,14 @@ set -euo pipefail
 # Pre-flight checks ensure a clean, reproducible release from main.
 # ──────────────────────────────────────────────────────────────────────
 
+# ── Resolve project root (parent of this script's directory) ─────────
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(dirname "${SCRIPT_DIR}")"
+
 # ── Read version from pyproject.toml ─────────────────────────────────
 VERSION="$(python3 -c "
 import tomllib, pathlib
-data = tomllib.loads(pathlib.Path('pyproject.toml').read_text())
+data = tomllib.loads(pathlib.Path('${PROJECT_ROOT}/pyproject.toml').read_text())
 print(data['project']['version'])
 ")"
 TAG="v${VERSION}"
@@ -49,9 +53,9 @@ echo "Pre-flight checks passed ✓"
 
 # ── Build ────────────────────────────────────────────────────────────
 echo "Building package ..."
-uv build
+(cd "${PROJECT_ROOT}" && uv build)
 
-wheel="$(find dist -name '*.whl' | head -n 1)"
+wheel="$(find "${PROJECT_ROOT}/dist" -name '*.whl' | head -n 1)"
 if [[ -z "${wheel}" ]]; then
     echo "Error: No wheel found in dist/ after build." >&2
     exit 1
@@ -59,12 +63,12 @@ fi
 
 # ── Bundle zip ───────────────────────────────────────────────────────
 echo "Creating ${ZIP_NAME} ..."
-mkdir -p .tmp
-staging=".tmp/doc-classify-${VERSION}"
+mkdir -p "${PROJECT_ROOT}/.tmp"
+staging="${PROJECT_ROOT}/.tmp/doc-classify-${VERSION}"
 mkdir -p "${staging}"
 cp "${wheel}" "${staging}/"
-cp install.sh "${staging}/"
-(cd .tmp && zip -r "${ZIP_NAME}" "doc-classify-${VERSION}")
+cp "${PROJECT_ROOT}/install.sh" "${staging}/"
+(cd "${PROJECT_ROOT}/.tmp" && zip -r "${ZIP_NAME}" "doc-classify-${VERSION}")
 rm -rf "${staging}"
 
 # ── Tag and release ──────────────────────────────────────────────────
@@ -73,12 +77,12 @@ git tag "${TAG}"
 git push origin "${TAG}"
 
 echo "Publishing GitHub release ..."
-gh release create "${TAG}" ".tmp/${ZIP_NAME}" \
+gh release create "${TAG}" "${PROJECT_ROOT}/.tmp/${ZIP_NAME}" \
     --title "doc-classify ${VERSION}" \
     --notes "Release ${VERSION}"
 
 # ── Clean up ─────────────────────────────────────────────────────────
-rm -rf dist/ .tmp/
+rm -rf "${PROJECT_ROOT}/dist/" "${PROJECT_ROOT}/.tmp/"
 
 echo ""
 echo "✓ Released ${TAG} successfully!"
