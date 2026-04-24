@@ -5,7 +5,8 @@
 set -euo pipefail
 
 SCRIPT_DIR="${0:a:h}"
-MODE_FILE="${SCRIPT_DIR}/src/doc_classify/config/_mode.py"
+PROJECT_ROOT="${SCRIPT_DIR:h}"
+MODE_FILE="${PROJECT_ROOT}/src/doc_classify/config/_mode.py"
 
 if [[ ! -f "$MODE_FILE" ]]; then
     echo "Error: Mode file not found at ${MODE_FILE}" >&2
