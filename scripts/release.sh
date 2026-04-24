@@ -44,11 +44,6 @@ if ! gh auth status &>/dev/null; then
     exit 1
 fi
 
-if git rev-parse "${TAG}" &>/dev/null; then
-    echo "Error: Version ${TAG} has already been released." >&2
-    exit 1
-fi
-
 echo "Pre-flight checks passed ✓"
 
 # ── Version bump ─────────────────────────────────────────────────────
