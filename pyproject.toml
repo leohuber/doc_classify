@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "doc-classify"
-version = "0.5.0"
+version = "0.5.1"
 description = "Document classification CLI tool"
 requires-python = ">=3.14"
 dependencies = [
